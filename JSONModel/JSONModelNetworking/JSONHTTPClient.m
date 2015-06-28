@@ -298,6 +298,14 @@ static NSString* requestContentType = nil;
             error = [JSONModelError errorBadResponse];
         }
 
+        NSMutableString *stringData = [[NSMutableString alloc] initWithData:responseData
+                                                                   encoding:NSUTF8StringEncoding];
+        if([stringData hasPrefix:@"["]) { // begins as an array
+            [stringData insertString:@"{\"items\":" atIndex:0];
+            [stringData appendString:@"}"];
+            responseData = [stringData dataUsingEncoding:NSUTF8StringEncoding];
+        }
+
         //step 4: if there's a response at this and no errors, convert to object
         if (error==nil) {
 			// Note: it is possible to have a valid response with empty response data (204 No Content).
